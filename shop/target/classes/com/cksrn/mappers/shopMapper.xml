@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop">
+
+<select id="shopList_1" resultType="goodsView">
+	 select g.gdsNum, g.gdsName, g.cateCode, c.cateCodeRef, c.cateName, gdsPrice, gdsStock, gdsDes, gdsImg, gdsDate, g.gdsImg, g.gdsThumbImg 
+	 	from tbl_goods g inner join goods_category c on g.cateCode = c.cateCode where g.cateCode = #{cateCode} or c.cateCodeRef = #{cateCodeRef}
+</select>
+
+<!-- 카테고리별 상품 리스트 : 2차 분류 -->
+<select id="shopList_2" resultType="goodsView">
+select g.gdsNum, g.gdsName, g.cateCode, c.cateCodeRef, c.cateName,gdsPrice, gdsStock, gdsDes, gdsDate, g.gdsImg, g.gdsThumbImg
+	from tbl_goods g inner join goods_category c on g.cateCode = c.cateCode where g.cateCode = #{cateCode}
+</select>
+
+<select id="goodsView" resultType="goodsView">
+		select g.gdsNum, g.gdsName, g.cateCode, c.cateCodeRef, c.cateName, gdsPrice, gdsStock,gdsDes, gdsImg, gdsDate,g.gdsImg, g.gdsThumbImg from tbl_goods g inner join goods_category c on g.cateCode = c.cateCode where g.gdsNum = #{gdsNum}
+</select>
+
+<insert id="insertReply">
+	insert into tbl_comment (gdsNum,userId,comNum,comCon)values(#{gdsNum},#{userId},TBL_COMMENT_SEQ.nextval,#{comCon})
+</insert>
+
+<select id="replyList" resultType="replyList">
+	select r.gdsNum, r.userId, r.comNum, r.comCon, r.comDate, m.userName from tbl_comment r inner join tbl_member m on r.userId = m.userId where gdsNum = #{gdsNum}
+</select>
+
+<delete id="deleteReply">
+	delete tbl_comment where comNum = #{comNum} and userId = #{userId}
+</delete>
+
+<select id="replyIdCheck" resultType="String">
+	select userId from tbl_comment where comNum = #{comNum}
+</select>
+
+<update id="updateReply">
+	update tbl_comment set comCon = #{comCon} where comNum = #{comNum} and userId= #{userId}
+</update>
+
+<insert id="insertCart">
+	insert into tbl_cart(cartNum, userId, gdsNum, cartStock) values (tbl_cart_seq.nextval, #{userId},#{gdsNum},#{cartStock})
+</insert>
+
+<select id="cartList" resultType="cartList">
+	select row_number() over(order by c.cartNum desc) as num, c.cartNum, c.userId, c.gdsNum, c.cartStock, c.addDate,
+g.gdsName, g.gdsPrice, g.gdsthumbimg from tbl_cart c inner join tbl_goods g on c.gdsNum = g.gdsNum 
+where c.userId = #{userId}
+</select>
+
+<delete id="deleteCart">
+	delete from tbl_cart where userId = #{userId} and cartNum = #{cartNum}
+</delete>
+
+<insert id="insertOrder">
+	insert into tbl_order(orderId, userId, orderRec, userAddr1, userAddr2, userAddr3, orderPhon, amount)values(#{orderId},#{userId},#{orderRec},#{userAddr1},#{userAddr2},#{userAddr3},#{orderPhon},#{amount})
+</insert>
+
+<insert id="insertOrderDetails">
+	insert into tbl_order_details(orderDetailsNum,orderId,gdsNum,cartStock) select tbl_order_details_seq.nextval,#{orderId},gdsNum,cartStock from tbl_cart
+</insert>
+
+<delete id="cartAllDelete">
+	delete tbl_cart where userId = #{userId}
+</delete>
+
+<select id="selectOrder" resultType="order">
+	select * from tbl_order where userId=#{userId}
+</select>
+
+<select id="orderView" resultType="orderLists">
+	select o.*,d.orderDetailsNum,d.gdsNum,d.cartStock,g.gdsName, g.gdsThumbImg,g.gdsPrice from 
+		tbl_order o inner join tbl_order_details d on o.orderId = d.orderId inner join tbl_goods g on d.gdsNum = g.gdsNum where o.userId = #{userId} and o.orderId= #{orderId}
+</select>
+</mapper>

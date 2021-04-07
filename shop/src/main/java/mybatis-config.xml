@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- Alias 설정 -->
+	<typeAliases>
+		<typeAlias alias="member" type="com.cksrn.domain.MemberVO" />
+			
+		<typeAlias alias="category" type="com.cksrn.domain.CategoryVO" />
+		<typeAlias alias="goods" type="com.cksrn.domain.GoodsVO" />
+		<typeAlias alias="goodsView" type="com.cksrn.domain.GoodsViewVO" />
+		<typeAlias alias="replyList" type="com.cksrn.domain.ReplyListVO" />	
+		
+		<typeAlias alias="cart" type="com.cksrn.domain.CartVO" />
+		<typeAlias alias="cartList" type="com.cksrn.domain.CartListVO" />
+		
+		<typeAlias alias="order" type="com.cksrn.domain.OrderVO" />
+		<typeAlias alias="orderDetail" type="com.cksrn.domain.OrderDetailVO" />	
+		<typeAlias alias="orderLists" type="com.cksrn.domain.OrderListVO" />	
+	</typeAliases>
+
+
+</configuration>
+

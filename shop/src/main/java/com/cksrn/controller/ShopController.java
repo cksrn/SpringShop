@@ -31,7 +31,7 @@ public class ShopController {
 
 	@Inject
 	private ShopService service;
-	
+	//카테고리별 상품 리스트
 	@RequestMapping(value="/list", method = RequestMethod.GET)
 	public void getList(@RequestParam("c") int cateCode, @RequestParam("L") int level, Model model) throws Exception{
 		List<GoodsViewVO> list = service.shopList(cateCode,level);
@@ -80,16 +80,20 @@ public class ShopController {
 	public int getReplyList(ReplyVO reply, HttpSession session) throws Exception{
 		int result = 0;
 		
-		MemberVO member = (MemberVO)session.getAttribute("member");
-		String userId = service.replyIdCheck(reply.getComNum());
+		MemberVO member = (MemberVO)session.getAttribute("member");//현재 로그인한 member 세션을 가져옴
+		String userId = service.replyIdCheck(reply.getComNum());//소감을 작성한 사용자의 아이디를 가져옴
 //		System.out.println("member =>" + member.getUserId());
 //		System.out.println("userId =>" + userId);
+		//로그인한 아이디와, 소감을 작성한 아이디를 비교
 		if(member.getUserId().equals(userId)) {
-			reply.setUserId(member.getUserId());
-			service.deleteReply(reply);
-			
+			//로그인한 아이디가 작성한 아이디와 같다면
+			reply.setUserId(member.getUserId()); //reply에 userId 저장
+			service.deleteReply(reply); //서비스의 deleteReply 메서드 실행
+			//결과값변경
 			result =1;
 		}
+		//정상적으로 실행되면 소감 삭제가 진행되고, result값은 1이지만
+		//비정상적으로 실행되면 소감 삭제가 안되고,result값이 0
 		return result;
 	}
 	
@@ -146,12 +150,12 @@ public class ShopController {
 		
 		int result = 0;
 		int cartNum = 0;
-		
+		//로그인 여부 구분
 		if(member != null) {
 			cart.setUserId(userId);
 			
-			for(String i : chArr) {
-				cartNum = Integer.parseInt(i);
+			for(String i : chArr) {//에이젝스에서 받은 chArr의 갯수만큼 반복
+				cartNum = Integer.parseInt(i);// i번재 데이터를 cartNum에저장
 				cart.setCartNum(cartNum);
 				service.deleteCart(cart);
 			}
@@ -165,16 +169,16 @@ public class ShopController {
 	public String insertOrder(HttpSession session, OrderVO order, OrderDetailVO orderDetail) throws Exception{
 		MemberVO member = (MemberVO)session.getAttribute("member");
 		String userId = member.getUserId();
-		
+		//캘린더 호출
 		Calendar cal = Calendar.getInstance();
-		int year = cal.get(Calendar.YEAR);
-		String ym = year + new DecimalFormat("00").format(cal.get(Calendar.MONTH)+1);
-		String ymd = ym + new DecimalFormat("00").format(cal.get(Calendar.DATE));
-		String subNum ="";
-		for(int i = 1; i<=6; i++) {
-			subNum += (int)(Math.random() * 10);
+		int year = cal.get(Calendar.YEAR);//연도 추출
+		String ym = year + new DecimalFormat("00").format(cal.get(Calendar.MONTH)+1);//월 추출
+		String ymd = ym + new DecimalFormat("00").format(cal.get(Calendar.DATE));//일 추출
+		String subNum =""; //랜덤 숫자를 저장할 문자열 변수
+		for(int i = 1; i<=6; i++) {//6회반복
+			subNum += (int)(Math.random() * 10);//0~9까지 숫자를 생성하고 subNum에 저장
 		}
-		String orderId = ymd + "_" + subNum;
+		String orderId = ymd + "_" + subNum; //연월일_랜덤숫자로 구성된 문자
 		
 //		System.out.println("orderId =>" + order.getOrderId());
 //		System.out.println("detailId => " + orderDetail.getOrderId());
@@ -185,7 +189,7 @@ public class ShopController {
 		
 		orderDetail.setOrderId(orderId);
 		service.insertOrderDetails(orderDetail);
-		
+		//주문 테이블, 주문 상세 테이블에 데이터를 전송하고 카트비우기
 		service.cartAllDelete(userId);
 		return "redirect:/shop/orderList";
 	}

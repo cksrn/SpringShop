@@ -7,7 +7,7 @@
 	<insert id="signup">
 		insert into tbl_member(userId,userPass,userName,userPhon)values(#{userId},#{userPass},#{userName},#{userPhon})
 	</insert>
-	
+	<!-- 로그인 -->
 	<select id="signin" resultType="member">
 		select * from tbl_member where userId = #{userId}
 	</select>

@@ -11,12 +11,14 @@ public class MemberDaoImpl implements MemberDAO{
 	@Inject
 	SqlSessionTemplate sql;
 
+	//회원가입
 	@Override
 	public void signup(MemberVO vo) throws Exception {
 //		System.out.println("signupDAO()");
 		sql.insert("sign.signup", vo);		
 	}
 
+	//로그인
 	@Override
 	public MemberVO signin(MemberVO vo) throws Exception {
 //		System.out.println("signinDAO()");

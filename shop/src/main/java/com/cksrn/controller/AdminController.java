@@ -57,9 +57,9 @@ public class AdminController {
 	public void getGoodsRegister(Model model) throws Exception {
 		logger.info("get goods register");
 
-		List<CategoryVO> category = null;
-		category = service.category();
-		model.addAttribute("category", JSONArray.fromObject(category));
+		List<CategoryVO> category = null; //CategoryVO 형태의 List형 변수 category 선언
+		category = service.category(); // DB에 저장된 카테고리를 가져와서 category에 저장
+		model.addAttribute("category", JSONArray.fromObject(category)); //변수 category를  제이슨 타입으로 변환하여 category 세션에부여
 	}
 	
 	// 상품 등록
@@ -98,8 +98,8 @@ public class AdminController {
 	public void getGoodList(Model model) throws Exception{
 		logger.info("get goods list");
 		
-		List<GoodsViewVO> list = service.selectGoods();
-		model.addAttribute("list", list);
+		List<GoodsViewVO> list = service.selectGoods(); //GoodsVO 형태의 List형 변수 list 선언
+		model.addAttribute("list", list); //변수 list의 값을 list 세션에 부여
 	}
 	
 	//상품 상세보기
@@ -115,8 +115,9 @@ public class AdminController {
 	//상품 수정
 	@RequestMapping(value="/goods/modify", method=RequestMethod.GET)
 	public void getGoodsModify(@RequestParam("n") int gdsNum, Model model) throws Exception{
+		//@RequestParam("n")으로 인해, URL주소에 있는 n의 값을 가져와 gdsNum에 저장
 		logger.info("get goods view");	
-		GoodsViewVO goods = service.getGood(gdsNum);
+		GoodsViewVO goods = service.getGood(gdsNum); //GoodsViewVO 형태 변수 goods에 상품 정보 저장
 		model.addAttribute("goods", goods);
 		List<CategoryVO> category = null;
 		category = service.category();
@@ -143,7 +144,8 @@ public class AdminController {
 			vo.setGdsThumbImg(
 					File.separator + "imgUpload" + ymdPath + File.separator + "s" + File.separator + "s_" + fileName);
 
-		} else {			
+		} else { //새로운 파일이 등록되지 않았다면
+			//기존 이미지를 그대로 사용
 			vo.setGdsImg(req.getParameter("gdsImg"));
 			vo.setGdsThumbImg(req.getParameter("gdsThumbImg"));
 		}
@@ -155,6 +157,7 @@ public class AdminController {
 	//상푹삭제
 	@RequestMapping(value="/goods/delete",method = RequestMethod.POST)
 	public String postDeleteGoods(@RequestParam("n") int gdsNum) throws Exception{
+		//@RequestParam("n")으로 인해, URL주소에있는 n의 값을 가져와 gdsNum에 저장
 		logger.info("post delete goods");
 		service.deleteGoods(gdsNum);
 		return "redirect:/admin/index";
@@ -235,8 +238,9 @@ public class AdminController {
 	public String getdelivery(OrderVO order) throws Exception{
 		
 		service.delivery(order);
-		
+		//새로운 Service -> DAO -> Mapper를 사용하지 않고 기존에 있던 Service를 사용
 		List<OrderListVO> orderView = service.getOrderView(order);
+		//생성자 사용
 		GoodsVO goods = new GoodsVO();
 		
 		for(OrderListVO i : orderView) {
